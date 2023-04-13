@@ -1,0 +1,89 @@
+﻿@page "/fetchdata"
+
+<PageTitle>Weather forecast</PageTitle>
+
+@using BlazorApp1.Data
+@using BlazorApp1.Services;
+@inject WeatherForecastService ForecastService
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Last Name</th>
+                <th>Age</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var person in people)
+            {
+                <tr>
+                    <td>@person.FName</td>
+                    <td>@person.LName</td>
+                    <td>@person.Birthdate</td>
+Last
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private WeatherForecast[]? forecasts;
+    List<PersonModel> people = new();
+    DateTime dt = DateTime.Now;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        people = FetchMyData();
+        
+    }
+
+    // here we can use sql methods to get data
+    // since we already have a forecast array we can outcomment the OnInitializedAsync method and make our own method that puts data from sql into the forecast array
+    // alternatively we can make a new array or list to store data in and then modify the html code to use the new variable to display data
+    // it would be a good idea to create a model class containing the data to display before
+    // instead of creating the sql methods here it would be more comprehensible to create a new class in a 'services' folder and call them here 
+    // eg /services/SqlGet{ModelName}
+
+    private List<PersonModel> FetchMyData()
+    {
+        SqlGetPerson getService = new();
+
+        return getService.GetPerson();
+
+    }
+
+}
