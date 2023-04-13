@@ -5,6 +5,7 @@
 @using BlazorApp1.Data
 @using BlazorApp1.Services;
 @inject WeatherForecastService ForecastService
+@inject IConfiguration Configuration
 
 <h1>Weather forecast</h1>
 
@@ -51,8 +52,7 @@ else
                 <tr>
                     <td>@person.FName</td>
                     <td>@person.LName</td>
-                    <td>@person.Birthdate</td>
-Last
+                    <td>@person.Age</td>
                 </tr>
             }
         </tbody>
@@ -60,6 +60,8 @@ Last
 }
 
 @code {
+
+
     private WeatherForecast[]? forecasts;
     List<PersonModel> people = new();
     DateTime dt = DateTime.Now;
@@ -82,7 +84,7 @@ Last
     {
         SqlGetPerson getService = new();
 
-        return getService.GetPerson();
+        return getService.GetPerson(Configuration.GetConnectionString("DefaultConnection"));
 
     }
 

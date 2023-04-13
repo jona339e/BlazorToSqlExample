@@ -5,13 +5,14 @@ namespace BlazorApp1.Services
 {
     public class SqlGetPerson
     {
-        string conn = @"Data Source=localhost\SQLEXPRESS;Database=BlazorApp1;Trusted_Connection=True;";
-        public List<PersonModel> GetPerson()
+
+
+        public List<PersonModel> GetPerson(string conn)
         {
             List<PersonModel> personList = new();
 
 
-            using (SqlConnection connection = new(conn))
+            using (SqlConnection connection = new SqlConnection(conn))
             {
                 connection.Open();
                 using (SqlCommand command = new("EXEC usp_GetPerson", connection))
@@ -23,7 +24,7 @@ namespace BlazorApp1.Services
                             PersonModel person = new();
                             person.FName = reader.GetString(0);
                             person.LName = reader.GetString(1);
-                            person.Birthdate = reader.GetDateTime(2);
+                            person.Age = DateTime.Now.Year - reader.GetDateTime(2).Year;
                             personList.Add(person);
                         }
                     }
